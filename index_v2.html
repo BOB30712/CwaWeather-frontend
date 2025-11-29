@@ -10,7 +10,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./icon-v2.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 新增像素感字型（DotGothic16） -->
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- 像素感字型 -->
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Maru+Gothic:wght@400;700;900&display=swap"
         rel="stylesheet">
 
@@ -33,7 +35,8 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
         }
 
@@ -100,6 +103,7 @@
         .status-chip.app-name {
             background: #4fb5d9;
             color: #ffffff;
+            position: relative;
         }
 
         .status-chip.app-name::after {
@@ -127,8 +131,6 @@
             pointer-events: none;
         }
 
-
-
         /* 右側文字 */
         .status-text {
             color: #ffffff;
@@ -139,7 +141,7 @@
             white-space: nowrap;
         }
 
-        /* 網路狀態小方塊 */
+        /* 網路狀態小方塊（目前沒用到，但保留） */
         .status-net {
             padding: 2px 6px;
             border-radius: 0;
@@ -163,7 +165,6 @@
                 align-items: flex-start;
             }
         }
-
 
         .location-pill {
             background: var(--ac-yellow);
@@ -426,10 +427,30 @@
                 padding: 4px 8px;
             }
         }
+
+        /* 背景天氣 pixel sprite */
+        .bg-sprite.pixel-sprite {
+            font-size: 2rem;
+            position: fixed;
+            left: -40px;
+            top: 20%;
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.9;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            image-rendering: pixelated;
+        }
     </style>
 </head>
 
 <body>
+    <!-- 背景天氣 pixel sprite -->
+    <div id="bgSprite" class="bg-sprite pixel-sprite"></div>
+
+
     <div id="loading" class="loading-screen">
         <div class="loading-icon">☁️</div>
         <p class="loading-text">正在觀測雲的流動...</p>
@@ -445,18 +466,16 @@
         </div>
     </div>
 
-
     <div class="container" id="mainContent" style="display: none;">
-
         <div id="heroCard"></div>
 
         <h3 class="section-title">稍後預報</h3>
         <div class="scroll-container" id="futureForecasts"></div>
-
     </div>
 
     <script>
         const API_URL = "http://localhost:3000/api/weather/kaohsiung";
+        let globalForecasts = []; // 給背景動畫使用
 
         function getWeatherIcon(weather) {
             if (!weather) return "🌤️";
@@ -503,7 +522,10 @@
             const current = forecasts[0];
             const others = forecasts.slice(1);
 
-            // 1. 渲染 Hero Card (主畫面)
+            // 存給背景動畫用
+            globalForecasts = forecasts;
+
+            // 1. Hero Card
             const advice = getAdvice(current.rain, current.maxTemp);
             const period = getTimePeriod(current.startTime);
             const avgTemp = Math.round((parseInt(current.maxTemp) + parseInt(current.minTemp)) / 2);
@@ -532,7 +554,7 @@
                 </div>
             `;
 
-            // 2. 渲染稍後預報 (包含明天判斷)
+            // 2. 稍後預報
             const scrollContainer = document.getElementById('futureForecasts');
             scrollContainer.innerHTML = '';
 
@@ -568,6 +590,9 @@
             // 顯示主畫面
             document.getElementById('loading').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
+
+            // 啟動背景 pixel sprite 動畫（只會初始化一次）
+            initBgSpriteAnimation();
         }
 
         async function fetchWeather() {
@@ -588,6 +613,63 @@
         }
 
         document.addEventListener("DOMContentLoaded", fetchWeather);
+
+        // 隨機高度 & 重設起點位置
+        function setRandomTarget(bgSprite) {
+            const randomY = gsap.utils.random(10, 80); // top 百分比
+            bgSprite.style.top = randomY + "%";
+            gsap.set(bgSprite, { x: "-20vw", y: 0 });
+        }
+
+
+        // 更新背景 sprite 的貼圖
+        function updateBgSprite(weatherText) {
+            const sprite = document.getElementById("bgSprite");
+            if (!sprite) return;
+            sprite.textContent = getWeatherIcon(weatherText);
+        }
+
+        // 從 forecasts 裡挑一筆隨機天氣
+        function setRandomWeather() {
+            if (!globalForecasts || !globalForecasts.length) return;
+            const index = gsap.utils.random(0, globalForecasts.length - 1, 1);
+            const randomForecast = globalForecasts[index];
+            updateBgSprite(randomForecast.weather);
+        }
+
+        // 初始化 GSAP 背景動畫
+        function initBgSpriteAnimation() {
+            const bgSprite = document.getElementById("bgSprite");
+            if (!bgSprite || typeof gsap === "undefined") return;
+
+            // 避免重複初始化
+            if (bgSprite.dataset.inited === "true") return;
+            bgSprite.dataset.inited = "true";
+
+            // 初始位置 + 初始天氣
+            setRandomTarget(bgSprite);
+            setRandomWeather();
+
+            gsap.to(bgSprite, {
+                x: "120vw",
+                duration: 8,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut",
+                onRepeat: () => {
+                    setRandomWeather();
+                    setRandomTarget(bgSprite);
+                }
+            });
+            // 模擬 bounce 動畫（GSAP 版）
+            gsap.to("#bgSprite", {
+                y: -4,                    // 往上 4px
+                duration: 0.55,           // 一半時間
+                repeat: -1,
+                yoyo: true,
+                ease: "steps(2)"          // 等同 steps(2, end)
+            });
+        }
     </script>
 </body>
 
