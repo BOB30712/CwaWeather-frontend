@@ -76,7 +76,7 @@
             top: 0;
             z-index: 100;
             gap: 8px;
-            font-size: 0.75rem;
+            font-size: 1.5rem;
         }
 
         /* 左右區塊 */
@@ -146,16 +146,6 @@
             white-space: nowrap;
         }
 
-        /* 網路狀態小方塊（目前沒用到，但保留） */
-        .status-net {
-            padding: 2px 6px;
-            border-radius: 0;
-            border: 2px solid #000000;
-            font-weight: bold;
-            font-size: 0.65rem;
-            white-space: nowrap;
-        }
-
         .status-net-ok {
             background: #46c06a;
             color: #ffffff;
@@ -169,32 +159,14 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-        }
-
-        .location-pill {
-            background: var(--ac-yellow);
-            color: var(--ac-brown);
-            padding: 6px 12px;
-            border-radius: 0;
-            font-weight: 1800;
-            font-size: 0.9rem;
-            border: 3px solid #000000;
-            box-shadow: 0 3px 0 #c6b85a;
-        }
-
-        .update-pill {
-            font-size: 0.7rem;
-            color: #ffffff;
-            background: #3b322c;
-            padding: 4px 8px;
-            border-radius: 0;
-            border: 2px solid #000000;
-            box-shadow: 0 3px 0 #14110f;
+            .app-name{
+                display: none;
+            }
         }
 
         .container {
             padding: 16px;
-            max-width: 600px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -226,7 +198,7 @@
             font-weight: bold;
             border: 3px solid #000000;
             box-shadow: 0 4px 0 #245b70;
-            font-size: 0.8rem;
+            font-size: 1.8rem;
             text-shadow: 1px 1px 0 #000000;
         }
 
@@ -239,7 +211,7 @@
         }
 
         .hero-icon {
-            font-size: 3.6rem;
+            font-size: 4.6rem;
             filter: drop-shadow(2px 2px 0 #000000);
             animation: bounce 1.1s steps(2, end) infinite;
         }
@@ -264,7 +236,7 @@
         }
 
         .hero-desc {
-            font-size: 1.1rem;
+            font-size: 2.1rem;
             color: #5a4c43;
             margin-bottom: 14px;
             font-weight: bold;
@@ -293,13 +265,13 @@
         }
 
         .advice-icon {
-            font-size: 1.8rem;
+            font-size: 2.8rem;
             margin-bottom: 4px;
             text-shadow: 2px 2px 0 #f1dec2;
         }
 
         .advice-text {
-            font-size: 1rem;
+            font-size: 1.9rem;
             font-weight: 900;
             color: var(--ac-brown);
             margin: 4px 0;
@@ -308,13 +280,13 @@
         }
 
         .advice-sub {
-            font-size: 0.65rem;
+            font-size: 1.65rem;
             color: #555;
         }
 
         /* === 稍後預報：橫向像素卡 === */
         .section-title {
-            font-size: 1rem;
+            font-size: 1.65rem;
             color: #ffffff;
             margin-bottom: 10px;
             margin-left: 4px;
@@ -351,7 +323,7 @@
             color: #ffffff;
             padding: 3px 8px;
             border-radius: 0;
-            font-size: 0.7rem;
+            font-size: 1.7rem;
             display: inline-block;
             margin-bottom: 8px;
             font-weight: bold;
@@ -360,13 +332,13 @@
         }
 
         .mini-icon {
-            font-size: 2rem;
+            font-size: 3rem;
             margin: 4px 0;
             text-shadow: 2px 2px 0 #f1e0c7;
         }
 
         .mini-temp {
-            font-size: 0.95rem;
+            font-size: 1.95rem;
             font-weight: 800;
             color: var(--ac-dark);
         }
@@ -410,7 +382,7 @@
             color: #ffffff;
             font-weight: bold;
             margin-top: 16px;
-            font-size: 0.8rem;
+            font-size: 2.8rem;
             padding: 4px 10px;
             border: 3px solid #000000;
             background: #1f1a16;
@@ -427,10 +399,6 @@
                 font-size: 3.1rem;
             }
 
-            .location-pill {
-                font-size: 0.8rem;
-                padding: 4px 8px;
-            }
         }
 
         /* 背景天氣 pixel sprite */
@@ -466,14 +434,12 @@
     <div class="status-bar">
         <div class="status-left">
             <span class="status-chip app-name">☁ 天氣查詢平台</span>
-            <div class="">
-                <span class="status-chip location">新北</span>
-                <span class="status-chip location">臺北</span>
-                <span class="status-chip location">桃園</span>
-                <span class="status-chip location">臺中</span>
-                <span class="status-chip location">臺南</span>
-                <span class="status-chip location">高雄</span>
-            </div>
+            <span class="status-chip location">新北</span>
+            <span class="status-chip location">臺北</span>
+            <span class="status-chip location">桃園</span>
+            <span class="status-chip location">臺中</span>
+            <span class="status-chip location">臺南</span>
+            <span class="status-chip location">高雄</span>
         </div>
         <div class="status-right">
             <span class="status-text" id="updateTime">更新中...</span>
